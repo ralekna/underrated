@@ -1,0 +1,22 @@
+{
+  "name": "interestingcoins",
+  "version": "1.0.0",
+  "description": "Utility to index coins",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "mocha"
+  },
+  "keywords": [
+    "crypto",
+    "currency",
+    "index"
+  ],
+  "author": "Rytis Alekna",
+  "license": "MIT",
+  "dependencies": {
+    "printf": "^0.2.5",
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5"
+  }
+}
