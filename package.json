@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/index.js"
   },
+  "preferGlobal": true,
   "bin": {
     "underrated": "src/index.js"
   },
@@ -31,6 +32,5 @@
       "name": "Rytis Alekna",
       "email": "r.alekna@gmail.com"
     }
-  ],
-  "preferGlobal": true
+  ]
 }
