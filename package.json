@@ -1,13 +1,13 @@
 {
   "name": "underrated",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utility to index coins",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js"
   },
   "bin": {
-    "underrated": "src/index.js",
+    "underrated": "src/index.js"
   },
   "keywords": [
     "crypto",
