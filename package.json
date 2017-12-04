@@ -32,5 +32,6 @@
       "name": "Rytis Alekna",
       "email": "r.alekna@gmail.com"
     }
-  ]
+  ],
+  "engines" : { "node" : ">=7.10.1" }
 }
