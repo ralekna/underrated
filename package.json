@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node src/index.js"
   },
+  "bin": {
+    "underrated": "src/index.js",
+  },
   "keywords": [
     "crypto",
     "currency",
@@ -29,6 +32,5 @@
       "email": "r.alekna@gmail.com"
     }
   ],
-  "underrated": "src/index.js",
   "preferGlobal": true
 }
