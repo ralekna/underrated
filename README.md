@@ -19,4 +19,4 @@ Open terminal/command-prompt/command-line and run `underrated`
 
 You should now see a list of currencies
  
-![Sample output of program](https://imgur.com/a/qG02K)
+![Sample output of program](https://i.imgur.com/dXuJFup.png)
