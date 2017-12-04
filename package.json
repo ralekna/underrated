@@ -1,6 +1,6 @@
 {
   "name": "underrated",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Utility to index coins",
   "main": "src/index.js",
   "scripts": {
