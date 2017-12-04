@@ -30,7 +30,7 @@ const printf = require('printf');
     const btcPrice = parseFloat(bitCoinData['price_usd']);
 
 
-    // btcTotalSupply / coinTotalSupply * (1 - coinPrice/btcPrice) * (coinVolumeUsd / coinCapitalizationUsd) * (coin24HoursUsdVolume / btc24HoursUsdVolume)
+    // (btcTotalSupply / coinTotalSupply) * (1 - coinPrice/btcPrice) * (coinVolumeUsd / coinCapitalizationUsd) * (coin24HoursUsdVolume / btc24HoursUsdVolume)
 
     console.log(`BitCoin stats`);
     console.log(`Price USD: ${bitCoinData.price_usd} supply: ${bitCoinData.available_supply} volume 24 USD: ${bitCoinData['24h_volume_usd']}\n`);
@@ -41,6 +41,8 @@ const printf = require('printf');
         P  - price: (1 - coinPrice/btcPrice)
         V  - volume: (coinVolumeUsd / coinCapitalizationUsd)
         VB - BTC volume: (coin24HoursUsdVolume / btc24HoursUsdVolume)
+        
+        CMC rank - coinmarketcap.com rank
     `);
 
     console.log(`No.  |  Symbol |                         Name |   price USD |         supply |  volume 24 USD |  CMC rank | Index fractions`);
@@ -58,9 +60,11 @@ const printf = require('printf');
         let rank = parseInt(data['rank']);
 
         let supplyRatio = btcSupply / supply;
-        let priceRatio = (1 - parseFloat(data['price_btc'])) + Number.EPSILON;
+        let priceRatio = (1 - parseFloat(data['price_btc'])) + Number.EPSILON; // adding EPSILON to avoid zeroing of BTC price index
         let volumeRatio = volume / parseFloat(data['market_cap_usd']);
         let btcVolumeRatio = parseFloat(data['24h_volume_usd']) / btcVolume;
+
+        // Right now it's disabled but in future it will be possible to add optional fraction  of popularity in in CMP
         let rankRatio = Math.sqrt(1 / rank);
 
         supplyRatio = isNaN(supplyRatio) ? 0 : supplyRatio;
@@ -68,7 +72,7 @@ const printf = require('printf');
         volumeRatio = isNaN(volumeRatio) ? 0 : volumeRatio;
         btcVolumeRatio = isNaN(btcVolumeRatio) ? 0 : btcVolumeRatio;
 
-        let index = supplyRatio * priceRatio * volumeRatio * btcVolumeRatio * rankRatio;
+        let index = supplyRatio * priceRatio * volumeRatio * btcVolumeRatio; //  * rankRatio;
 
         return {
             symbol: data.symbol,
@@ -88,8 +92,11 @@ const printf = require('printf');
     .sort((a, b) => b.index - a.index);
 
     processedData
-    .filter(coin => (coin.supply > 1000000 && coin.volume > 1000000 &&  coin.price <= btcPrice))
-    // .slice(0, 2000)
+    // TODO: make sanity filtering (optional)
+    // sanity check
+    // filtering out currencies that are more expensive then BTC, very low supply or volume
+    // .filter(coin => (coin.supply > 1000000 && coin.volume > 1000000 &&  coin.price <= btcPrice))
+    .filter(coin => coin.index !== 0) // filtering out currencies that doesn't provide enough information
     .forEach((coin, index) => {
         console.log(`${printf('%4d', index + 1)}  ${printf('%8s', coin.symbol)} ${printf('%30s', coin.name)}  ${printf('%12s', coin.price.toFixed(5))}   ${printf('%14s', parseInt(coin.data.available_supply))} ${printf('%16s', parseInt(coin.data['24h_volume_usd']))}        ${printf('%4s',coin.rank)} | S: ${coin.supplyRatio.toPrecision(10)} | P: ${coin.priceRatio.toPrecision(10)} | V: ${coin.volumeRatio.toPrecision(10)} | VB: ${coin.btcVolumeRatio.toPrecision(10)}`);
     });

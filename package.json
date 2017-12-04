@@ -1,16 +1,16 @@
 {
-  "name": "interestingcoins",
+  "name": "underrated",
   "version": "1.0.0",
   "description": "Utility to index coins",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "test": "mocha"
+    "start": "node src/index.js"
   },
   "keywords": [
     "crypto",
     "currency",
-    "index"
+    "index",
+    "cryptocurrency"
   ],
   "author": "Rytis Alekna",
   "license": "MIT",
@@ -18,5 +18,17 @@
     "printf": "^0.2.5",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com:ralekna/underrated.git"
+  },
+  "maintainers": [
+    {
+      "name": "Rytis Alekna",
+      "email": "r.alekna@gmail.com"
+    }
+  ],
+  "underrated": "src/index.js",
+  "preferGlobal": true
 }
