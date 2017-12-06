@@ -19,6 +19,7 @@
   "author": "Rytis Alekna",
   "license": "MIT",
   "dependencies": {
+    "minimist": "^1.2.0",
     "printf": "^0.2.5",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5"
@@ -33,5 +34,7 @@
       "email": "r.alekna@gmail.com"
     }
   ],
-  "engines" : { "node" : ">=7.10.1" }
+  "engines": {
+    "node": ">=7.10.1"
+  }
 }
