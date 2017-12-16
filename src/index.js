@@ -4,8 +4,6 @@ const minimist = require('minimist');
 
 let argv = minimist(process.argv.slice(2));
 
-console.log(argv);
-
 let limit = argv['l'] || argv['limit'];
 
 switch (true) {

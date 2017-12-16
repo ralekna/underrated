@@ -1,3 +1,5 @@
+![https://api.travis-ci.org/ralekna/underrated.svg?branch=master]
+
 # UnderRated
 
 this is a command line utility to to sort and display results from [https://www.coinmarketcap.com] by using this index:
@@ -15,10 +17,16 @@ Done.
 
 ## Running
 
-Open terminal/command-prompt/command-line and run `underrated stats` or just `underrated`
+Open terminal/command-prompt/command-line and run `underrated stats` or just `underrated` for capitalization and volumes tats
+
+![Sample output of program](https://i.imgur.com/5TAmNrd.png)
+
+
+Run `underrated pairs` for exchange pairs and exchanges stats
+
+![Sample output of program](https://i.imgur.com/FcCri4V.png)
 
 More commands and data to come soon
-
-You should now see a list of currencies
  
-![Sample output of program](https://i.imgur.com/dXuJFup.png)
+
+Author of program: [Rytis Alekna](https://github.com/ralekna/)
