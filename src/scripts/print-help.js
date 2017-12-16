@@ -9,7 +9,8 @@ Where <command> is one of:
 underrated help         print this help
 underrated stats        print coin market index
                         -l --limit sets maximum number of top coins to display
-
+underrated pairs        print coin pairs index
+                        -l --limit sets maximum number of top coins to display
     `)
   }
 };

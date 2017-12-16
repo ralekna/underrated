@@ -17,7 +17,7 @@ async function printStats(limit = Number.MAX_SAFE_INTEGER) {
 
   console.log('Retrieving data from CoinMarketCap...\n');
   try {
-    allData = JSON.parse(await request('https://api.coinmarketcap.com/v1/ticker/?limit=0'));
+    allData = JSON.parse(await request.get('https://api.coinmarketcap.com/v1/ticker/?limit=0'));
   } catch (error) {
     console.error(`An error occurred while retrieving data ${error}`);
     return;
