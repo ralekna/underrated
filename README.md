@@ -1,5 +1,3 @@
-![https://api.travis-ci.org/ralekna/underrated.svg?branch=master]
-
 # UnderRated
 
 this is a command line utility to to sort and display results from [https://www.coinmarketcap.com] by using this index:
@@ -30,3 +28,5 @@ More commands and data to come soon
  
 
 Author of program: [Rytis Alekna](https://github.com/ralekna/)
+
+![Build status](https://api.travis-ci.org/ralekna/underrated.svg?branch=master)
