@@ -29,6 +29,7 @@ function addPairToCoin(coinName, pairCoinName, exchangeName, coinsMap) {
     coin.uniqueCryptoPairs.add(pairCoinName);
 
     let pairCoin = getCoinFromStore(pairCoinName, coinsMap);
+    addPairCoinToExchange(pairCoin, coinName, exchangeName);
     pairCoin.allPairs++;
     pairCoin.exchanges.add(exchangeName);
     pairCoin.uniqueCryptoPairs.add(coinName);
