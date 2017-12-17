@@ -5,10 +5,16 @@ const {isFiat} = require('../fiat/fiat-util');
 function getCoinFromStore(coinName, coinsMap) {
   return coinsMap[coinName] || (coinsMap[coinName] = {
     exchanges:          new Set(),
+    exchangesToCoins:   {},
     uniqueCryptoPairs:  new Set(),
     uniqueFiatPairs:    new Set(),
     allPairs:           0
   });
+}
+
+function addPairCoinToExchange(coin, pairCoin, exchangeName) {
+  let exchange = coin.exchangesToCoins[exchangeName] || (coin.exchangesToCoins[exchangeName] = new Set());
+  exchange.add(pairCoin);
 }
 
 function addPairToCoin(coinName, pairCoinName, exchangeName, coinsMap) {
@@ -16,6 +22,7 @@ function addPairToCoin(coinName, pairCoinName, exchangeName, coinsMap) {
 
   coin.allPairs++;
   coin.exchanges.add(exchangeName);
+  addPairCoinToExchange(coin, pairCoinName, exchangeName);
   if (isFiat(pairCoinName)) {
     coin.uniqueFiatPairs.add(pairCoinName);
   } else {
@@ -55,7 +62,7 @@ async function mapCoinsPairs() {
           exchangeCoins[coinName].forEach(pairCoinName => {
 
             if (coinName === pairCoinName) {
-              console.log(`Ignoring identical pair in exchange ${exchangeName}: ${coinName}/${pairCoinName}`);
+              console.error(`Ignoring identical pair in exchange ${exchangeName}: ${coinName}/${pairCoinName}`);
               return;
             }
 
@@ -78,7 +85,33 @@ async function mapCoinsPairs() {
 
 }
 
-function flattenCoinsMap(coinsMap) {
+function flattenCoinsMapToMap(coinsMap) {
+  return Object.keys(coinsMap).reduce((flattenedCoinMap, coinName) => {
+    try {
+      flattenedCoinMap[coinName] = {
+        coinName,
+        exchangesNum: coinsMap[coinName].exchanges.size,
+        uniqueCryptoPairsNum: coinsMap[coinName].uniqueCryptoPairs.size,
+        uniqueFiatPairsNum: coinsMap[coinName].uniqueFiatPairs.size,
+        allUniquePairsNum: coinsMap[coinName].uniqueCryptoPairs.size + coinsMap[coinName].uniqueFiatPairs.size,
+        allPairs: coinsMap[coinName].allPairs
+      };
+    } catch (error) {
+      console.log(`Failed to flatten coin ${coinName}`, coinsMap[coinName], error);
+      flattenedCoinMap[coinName] = {
+        coinName,
+        exchangesNum: 0,
+        uniqueCryptoPairsNum: 0,
+        uniqueFiatPairsNum: 0,
+        allUniquePairsNum: 0,
+        allPairs: 0
+      };
+    }
+    return flattenedCoinMap;
+  }, {});
+}
+
+function flattenCoinsMapToList(coinsMap) {
   return Object.keys(coinsMap).map(coinName => {
     try {
       return {
@@ -103,7 +136,30 @@ function flattenCoinsMap(coinsMap) {
   });
 }
 
+function getCoinPairMaximums(flattenedCoinsMap) {
+  let max = {
+    exchangesNum: 0,
+    uniqueCryptoPairsNum: 0,
+    uniqueFiatPairsNum: 0,
+    allUniquePairsNum: 0,
+    allPairs: 0
+  };
+
+  flattenedCoinsMap.forEach((coin) => {
+    max.exchangesNum = Math.max(max.exchangesNum, coin.exchangesNum);
+  });
+
+  return max;
+}
+
+async function getSingleCoinPairs(coinName) {
+  return (await mapCoinsPairs())[coinName];
+}
+
 module.exports = {
-    mapCoinsPairs,
-    flattenCoinsMap
+  mapCoinsPairs,
+  flattenCoinsMapToMap,
+  flattenCoinsMapToList,
+  getCoinPairMaximums,
+  getSingleCoinPairs
 };

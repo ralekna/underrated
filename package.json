@@ -4,12 +4,12 @@
   "description": "Utility to index coins",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node src/command-line/index.js",
     "test": "mocha --reporter spec test/**/*.spec.js"
   },
   "preferGlobal": true,
   "bin": {
-    "underrated": "src/index.js"
+    "underrated": "src/command-line/index.js"
   },
   "keywords": [
     "crypto",

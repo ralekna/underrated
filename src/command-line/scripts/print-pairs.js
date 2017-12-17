@@ -1,10 +1,10 @@
-const {flattenCoinsMap, mapCoinsPairs} = require('../pairs/pairs-index');
+const {flattenCoinsMapToList, mapCoinsPairs, getSingleCoinPairs} = require('../../pairs/pairs-index');
 const printf = require('printf');
 
 async function printPairsIndex(limit) {
   let coinsMap = await mapCoinsPairs();
   console.log(`Retrieved coins map`);
-  let pairsList = flattenCoinsMap(coinsMap);
+  let pairsList = flattenCoinsMapToList(coinsMap);
 
   let maxStats = {
     uniqueCryptoPairsNum: 0,
@@ -22,6 +22,22 @@ async function printPairsIndex(limit) {
     })
 }
 
+async function printOneCoinPairs(coinName) {
+  let coinPairStats = await getSingleCoinPairs(coinName);
+  // console.log(JSON.stringify(coinPairStats, 4));
+  console.log('Printing one pair: ', coinName);
+  let stringified = JSON.stringify(coinPairStats, function(key, value) {
+    // console.log('value is set: ', key, value instanceof Set);
+    if (typeof value === 'object' && value instanceof Set) {
+      return [...value];
+      // return Array.from(value.values()).join(', ');
+    }
+    return value;
+  }, 2);
+  console.log(stringified);
+}
+
 module.exports = {
-  printPairsIndex
+  printPairsIndex,
+  printOneCoinPairs
 };
