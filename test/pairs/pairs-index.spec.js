@@ -1,15 +1,17 @@
 const {expect} = require('chai');
-const {stub} = require('sinon');
+const {createSandbox} = require('sinon');
 const {mapCoinsPairs} = require('../../src/pairs/pairs-index');
 const request = require('request-promise-native');
 
 describe('[pairs-index]', () => {
   describe('pairsIndex()', () => {
 
+    let sandbox;
     let coinsMap;
 
-    before(async () => {
-      stub(request, 'get').withArgs('https://min-api.cryptocompare.com/data/all/exchanges').resolves(`{
+    beforeEach(async () => {
+      sandbox = createSandbox();
+      sandbox.stub(request, 'get').withArgs('https://min-api.cryptocompare.com/data/all/exchanges').resolves(`{
         "Bitfinex": {
           "XRP": ["BTC", "USD"], 
           "BTC": ["USD", "EUR"], 
@@ -24,8 +26,8 @@ describe('[pairs-index]', () => {
       coinsMap = await mapCoinsPairs();
     });
 
-    after(() => {
-
+    afterEach(() => {
+      sandbox.restore();
     });
 
     it('should create indexes of mentioned crypto coins', () => {
