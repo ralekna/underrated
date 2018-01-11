@@ -13,7 +13,6 @@ module.exports = { printStats };
  * volatility index
  */
 
-// async function printStats(limit = Number.MAX_SAFE_INTEGER) {
 async function printStats({limit, includePairsStats} = {limit: Number.MAX_SAFE_INTEGER, includePairsStats: false}) {
   let allData;
   let pairData;
@@ -55,6 +54,8 @@ async function printStats({limit, includePairsStats} = {limit: Number.MAX_SAFE_I
         V  - volume: (coinVolumeUsd / coinCapitalizationUsd)
         VB - BTC volume: (coin24HoursUsdVolume / btc24HoursUsdVolume)
         C  - Capitalization against BTC ratio: (1 - coinMarketCapUsd / btcMarketCapUsd)
+        
+        PI - Pairs index - how many exchanges and and how many fiat currencies pairs available compared to Bitcoin: (exchangesRatio * fiatPairsRatio)
         I  - Index: raw index that is used for sort
         
         CMC rank - coinmarketcap.com rank
@@ -107,11 +108,7 @@ async function printStats({limit, includePairsStats} = {limit: Number.MAX_SAFE_I
 
     // let index = supplyRatio * priceRatio * volumeRatio * btcVolumeRatio; //  * rankRatio;
     // let index = capRatio; // * volumeRatio * btcVolumeRatio; //  * rankRatio;
-    let index = capRatio * btcVolumeRatio * pairsIndex; //  * rankRatio;
-
-    if (data.symbol === 'BTC' || data.symbol === 'ETH') {
-      console.log(`data.symbol: ${data.symbol} capRatio: ${capRatio}, index: ${index}`);
-    }
+    let index = capRatio * pairsIndex * btcVolumeRatio; //  * rankRatio;
 
     return {
       symbol: data.symbol,
