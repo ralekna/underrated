@@ -1,6 +1,6 @@
 const request = require('request-promise-native');
 const printf = require('printf');
-const {mapCoinsPairs, flattenCoinsMapToMap} = require('../../pairs/pairs-index');
+const {mapCoinsPairs, flattenCoinsMapToMap, fetchExchangesCoins} = require('../../pairs/pairs-index');
 
 module.exports = { printStats };
 
@@ -13,20 +13,21 @@ module.exports = { printStats };
  * volatility index
  */
 
-async function printStats({limit, includePairsStats} = {limit: Number.MAX_SAFE_INTEGER, includePairsStats: false}) {
+async function printStats({limit, includePairsStats, market} = {limit: Number.MAX_SAFE_INTEGER, includePairsStats: true, market: null}) {
   let allData;
   let pairData;
+  let exchangesCoins;
   console.log('Retrieving data from CoinMarketCap...\n');
   try {
-    [allData, pairData] = await Promise.all([request.get('https://api.coinmarketcap.com/v1/ticker/?limit=0'), mapCoinsPairs()]);
-
+    [allData, exchangesCoins] = await Promise.all([request.get('https://api.coinmarketcap.com/v1/ticker/?limit=0'), fetchExchangesCoins()]);
+    pairData = mapCoinsPairs(exchangesCoins);
     allData = JSON.parse(allData);
   } catch (error) {
     console.error(`An error occurred while retrieving data`, error);
     return;
   }
 
-  console.log(`Retrieved ${allData.length} currencies`);
+
 
   let pairsMap;
   try {
@@ -35,9 +36,29 @@ async function printStats({limit, includePairsStats} = {limit: Number.MAX_SAFE_I
     console.log(`Failed to flatten`, error);
   }
 
+  // filter against single market
+  if (market) {
+    allData = allData.filter(coin => {
+      let pairInfo = pairsMap[coin.symbol];
+      if (pairInfo) {
+        // console.log(coin.symbol, pairInfo);
+        return pairInfo.exchanges.has(market);
+      } else {
+        return false;
+      }
+    });
+  }
+
+  console.log(`Retrieved ${allData.length} currencies`);
+
   let btcPairsStats = pairsMap['BTC'];
 
   const bitCoinData = allData.find(item => item.symbol === 'BTC');
+
+  if (!bitCoinData) {
+    console.error(`No BTC data. Aborting`);
+    return;
+  }
 
   const btcSupply = parseFloat(bitCoinData['available_supply']);
   const btcVolume = parseFloat(bitCoinData['24h_volume_usd']);
@@ -108,7 +129,7 @@ async function printStats({limit, includePairsStats} = {limit: Number.MAX_SAFE_I
 
     // let index = supplyRatio * priceRatio * volumeRatio * btcVolumeRatio; //  * rankRatio;
     // let index = capRatio; // * volumeRatio * btcVolumeRatio; //  * rankRatio;
-    let index = capRatio * pairsIndex * btcVolumeRatio; //  * rankRatio;
+    let index = capRatio * btcVolumeRatio * (includePairsStats ? pairsIndex : 1 ); //  * rankRatio;
 
     return {
       symbol: data.symbol,

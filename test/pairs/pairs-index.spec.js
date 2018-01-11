@@ -1,6 +1,6 @@
 const {expect} = require('chai');
 const {createSandbox} = require('sinon');
-const {mapCoinsPairs} = require('../../src/pairs/pairs-index');
+const {mapCoinsPairs, fetchExchangesCoins} = require('../../src/pairs/pairs-index');
 const request = require('request-promise-native');
 
 describe('[pairs-index]', () => {
@@ -23,7 +23,7 @@ describe('[pairs-index]', () => {
           "ETH": ["BTC", "USDT"]
         }
       }`);
-      coinsMap = await mapCoinsPairs();
+      coinsMap = mapCoinsPairs(await fetchExchangesCoins());
     });
 
     afterEach(() => {

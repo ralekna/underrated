@@ -37,53 +37,51 @@ function addPairToCoin(coinName, pairCoinName, exchangeName, coinsMap) {
   }
 }
 
-async function mapCoinsPairs() {
+async function fetchExchangesCoins() {
+  return JSON.parse(await request.get('https://min-api.cryptocompare.com/data/all/exchanges'));
+}
 
-  try {
+function mapCoinsPairs(exchangesCoins) {
 
-    /*
-     * {
-     *  [exchange: string]: {
-     *    [coin: string]: string[];
-     *  };
-     * }
-     */
-    const exchangesCoins = JSON.parse(await request.get('https://min-api.cryptocompare.com/data/all/exchanges'));
-
-    // console.log(Object.keys(exchangesCoins));
-    // return {};
-
-    return Object.keys(exchangesCoins).reduce((coinsMap, exchangeName) => {
-
-      let exchangeCoins = exchangesCoins[exchangeName];
-
-      Object.keys(exchangeCoins).forEach(coinName => {
-        // console.log(`Coin: ${coinName}`);
-        if (Array.isArray(exchangeCoins[coinName])) {
-          exchangeCoins[coinName].forEach(pairCoinName => {
-
-            if (coinName === pairCoinName) {
-              console.error(`Ignoring identical pair in exchange ${exchangeName}: ${coinName}/${pairCoinName}`);
-              return;
-            }
-
-            addPairToCoin(coinName, pairCoinName, exchangeName, coinsMap);
-          });
-        } else {
-          console.error(`Unreadable coin pair in exchange: ${exchangeName}: ${coinName}`, exchangeCoins[coinName]);
-        }
-
-      });
-
-      return coinsMap;
-
-    }, {});
-
-  } catch (error) {
-    console.error('Failed to fetch data from CryptoCompare', error);
-    return {};
+  /*
+   * {
+   *  [exchange: string]: {
+   *    [coin: string]: string[];
+   *  };
+   * }
+   */
+  if (!exchangesCoins) {
+    throw new Error('param exchangesCoins is needed.');
   }
 
+  // console.log(Object.keys(exchangesCoins));
+  // return {};
+
+  return Object.keys(exchangesCoins).reduce((coinsMap, exchangeName) => {
+
+    let exchangeCoins = exchangesCoins[exchangeName];
+
+    Object.keys(exchangeCoins).forEach(coinName => {
+      // console.log(`Coin: ${coinName}`);
+      if (Array.isArray(exchangeCoins[coinName])) {
+        exchangeCoins[coinName].forEach(pairCoinName => {
+
+          if (coinName === pairCoinName) {
+            console.error(`Ignoring identical pair in exchange ${exchangeName}: ${coinName}/${pairCoinName}`);
+            return;
+          }
+
+          addPairToCoin(coinName, pairCoinName, exchangeName, coinsMap);
+        });
+      } else {
+        console.error(`Unreadable coin pair in exchange: ${exchangeName}: ${coinName}`, exchangeCoins[coinName]);
+      }
+
+    });
+
+    return coinsMap;
+
+  }, {});
 }
 
 function flattenCoinsMapToMap(coinsMap) {
@@ -91,6 +89,7 @@ function flattenCoinsMapToMap(coinsMap) {
     try {
       flattenedCoinMap[coinName] = {
         coinName,
+        exchanges: coinsMap[coinName].exchanges,
         exchangesNum: coinsMap[coinName].exchanges.size,
         uniqueCryptoPairsNum: coinsMap[coinName].uniqueCryptoPairs.size,
         uniqueFiatPairsNum: coinsMap[coinName].uniqueFiatPairs.size,
@@ -162,5 +161,6 @@ module.exports = {
   flattenCoinsMapToMap,
   flattenCoinsMapToList,
   getCoinPairMaximums,
-  getSingleCoinPairs
+  getSingleCoinPairs,
+  fetchExchangesCoins
 };
