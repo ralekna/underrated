@@ -8,6 +8,8 @@ function getSummary(allData) {
   return allData.map(market => ({
     name: market['MarketName'],
     price: market['Last'],
+    prevDayPrice: market['PrevDay'],
+    change: ((market['Last'] / market['PrevDay'] * 100) - 100),
     baseVolume: market['BaseVolume']
   }));
 }

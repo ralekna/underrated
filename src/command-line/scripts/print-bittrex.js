@@ -10,7 +10,7 @@ async function printBittrexMarkets() {
       .filter(market => !!~market.name.indexOf('BTC-'))
       .sort((a, b) => b.price - a.price)
       .forEach((market, index) => {
-        console.log(`${printf('%3d', index)}  ${printf('%12s', market.name)} | ${printf('%20s', market.price.toFixed(8))} | ${printf('%12d', market.baseVolume)}`);
+        console.log(`${printf('%3d', index)}  ${printf('%12s', market.name)} | ${printf('%20s', market.price.toFixed(8))} | ${printf('%12d', market.baseVolume)} | ${printf('%6d', market.change)} | ${printf('%20s', market.prevDayPrice.toFixed(8))}`);
       })
 
   } catch (error) {
